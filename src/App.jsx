@@ -305,11 +305,11 @@ export default function App() {
   return (
     <div style={{ minHeight: "100vh", background: C.cream, fontFamily: "system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif", color: C.brown }}>
       {/* Header */}
-      <div style={{ background: C.dkGreen, padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, position: "sticky", top: 0, zIndex: 20, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
+      <div style={{ background: C.dkGreen, padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, position: "sticky", top: 0, zIndex: 20, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <button onClick={() => setMenuOpen(!menuOpen)} style={{
-            background: menuOpen ? "rgba(255,255,255,0.15)" : "none", border: "1px solid rgba(255,255,255,0.25)",
-            borderRadius: 6, color: "#fff", padding: "6px 9px", cursor: "pointer", fontSize: 16, lineHeight: 1, display: "flex", alignItems: "center"
+            background: "none", border: "1px solid rgba(255,255,255,0.25)",
+            borderRadius: 6, color: "#fff", padding: "5px 9px", cursor: "pointer", fontSize: 16, lineHeight: 1
           }}>{menuOpen ? "✕" : "☰"}</button>
           <div>
             <div style={{ fontSize: 15, fontWeight: "bold", color: "#fff", letterSpacing: 0.5 }}>Starbucks Rewards × Mobile Marketing</div>
@@ -328,40 +328,40 @@ export default function App() {
         </div>
       </div>
 
-      {/* Overlay */}
-      {menuOpen && <div onClick={() => setMenuOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 14 }} />}
-
-      <div style={{ display: "flex", position: "relative" }}>
-        {/* Sidebar */}
-        <nav style={{
-          width: 220, background: "#fff", borderRight: `1px solid ${C.border}`,
-          padding: "10px 0", overflowY: "auto", boxShadow: "2px 0 8px rgba(0,0,0,0.06)",
-          position: "fixed", top: 52, bottom: 0, left: menuOpen ? 0 : -230,
-          transition: "left 0.25s ease", zIndex: 15
+      {/* Nav menu - full width dropdown */}
+      {menuOpen && (
+        <div style={{
+          position: "sticky", top: 52, zIndex: 15, background: "#fff",
+          borderBottom: `2px solid ${C.green}`, boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0
         }}>
           {NAV.map(n => (
             <button key={n.id} onClick={() => { setSec(n.id); setMenuOpen(false); }} style={{
-              display: "block", width: "100%", textAlign: "left", padding: "13px 18px",
-              border: "none", cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s",
+              display: "flex", alignItems: "center", gap: 8, padding: "14px 16px",
+              border: "none", cursor: "pointer", fontFamily: "inherit",
+              background: sec === n.id ? `${C.green}10` : "transparent",
+              borderBottom: `1px solid ${C.border}`,
+              color: sec === n.id ? C.dkGreen : C.brownLt, fontSize: 13.5, lineHeight: 1.3,
               borderLeft: sec === n.id ? `3px solid ${C.green}` : "3px solid transparent",
-              background: sec === n.id ? `${C.green}08` : "transparent",
-              color: sec === n.id ? C.dkGreen : C.brownLt, fontSize: 14, lineHeight: 1.3
             }}>
-              <span style={{ marginRight: 8 }}>{n.icon}</span>{n.en}
-              <div style={{ fontSize: 11.5, color: sec === n.id ? C.green : "#bbb", marginLeft: 27, marginTop: 2 }}>{n.zh}</div>
+              <span style={{ fontSize: 16 }}>{n.icon}</span>
+              <div>
+                <div style={{ fontWeight: sec === n.id ? "bold" : "normal" }}>{n.en}</div>
+                <div style={{ fontSize: 11, color: sec === n.id ? C.green : "#bbb", marginTop: 1 }}>{n.zh}</div>
+              </div>
             </button>
           ))}
-        </nav>
+        </div>
+      )}
 
-        {/* Main content */}
-        <main style={{ flex: 1, padding: "24px 20px", overflowY: "auto", maxHeight: "calc(100vh - 52px)", minHeight: "calc(100vh - 52px)" }}>
-          <h2 style={{ fontSize: 21, color: C.dkGreen, marginTop: 0, marginBottom: 22, borderBottom: `2px solid ${C.green}20`, paddingBottom: 10 }}>
-            {NAV.find(n => n.id === sec)?.icon} {NAV.find(n => n.id === sec)?.en}
-            <span style={{ fontSize: 13, color: C.brownLt, fontWeight: "normal", marginLeft: 8 }}>{NAV.find(n => n.id === sec)?.zh}</span>
-          </h2>
-          {R()}
-        </main>
-      </div>
+      {/* Main content - always full width */}
+      <main style={{ padding: "24px 20px", minHeight: "calc(100vh - 52px)" }}>
+        <h2 style={{ fontSize: 21, color: C.dkGreen, marginTop: 0, marginBottom: 22, borderBottom: `2px solid ${C.green}20`, paddingBottom: 10 }}>
+          {NAV.find(n => n.id === sec)?.icon} {NAV.find(n => n.id === sec)?.en}
+          <span style={{ fontSize: 13, color: C.brownLt, fontWeight: "normal", marginLeft: 8 }}>{NAV.find(n => n.id === sec)?.zh}</span>
+        </h2>
+        {R()}
+      </main>
     </div>
   );
 }
