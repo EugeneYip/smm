@@ -124,6 +124,7 @@ const NAV = [
 export default function App() {
   const [sec, setSec] = useState("background");
   const [lang, setLang] = useState("both");
+  const [menuOpen, setMenuOpen] = useState(false);
   const effLang = lang === "zh" ? "zh" : "en";
 
   const R = () => { switch(sec) {
@@ -303,41 +304,60 @@ export default function App() {
 
   return (
     <div style={{ minHeight: "100vh", background: C.cream, fontFamily: "system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif", color: C.brown }}>
-      <div style={{ background: C.dkGreen, padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10, position: "sticky", top: 0, zIndex: 10, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
-        <div>
-          <div style={{ fontSize: 16, fontWeight: "bold", color: "#fff", letterSpacing: 1 }}>Starbucks Rewards × Mobile Marketing</div>
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.55)", marginTop: 3, letterSpacing: 0.5 }}>MKTG 6200 — Mar 12, 2026</div>
+      {/* Header */}
+      <div style={{ background: C.dkGreen, padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8, position: "sticky", top: 0, zIndex: 20, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button onClick={() => setMenuOpen(!menuOpen)} style={{
+            background: menuOpen ? "rgba(255,255,255,0.15)" : "none", border: "1px solid rgba(255,255,255,0.25)",
+            borderRadius: 6, color: "#fff", padding: "6px 9px", cursor: "pointer", fontSize: 16, lineHeight: 1, display: "flex", alignItems: "center"
+          }}>{menuOpen ? "✕" : "☰"}</button>
+          <div>
+            <div style={{ fontSize: 15, fontWeight: "bold", color: "#fff", letterSpacing: 0.5 }}>Starbucks Rewards × Mobile Marketing</div>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>MKTG 6200 — Mar 12, 2026</div>
+          </div>
         </div>
         <div style={{ display: "flex", gap: 4 }}>
           {[{ k:"both", l:"EN/中" },{ k:"en", l:"EN" },{ k:"zh", l:"中文" }].map(o => (
             <button key={o.k} onClick={() => setLang(o.k)} style={{
-              padding: "5px 14px", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "inherit",
+              padding: "5px 12px", borderRadius: 4, fontSize: 12, cursor: "pointer", fontFamily: "inherit",
               border: lang === o.k ? "1px solid rgba(255,255,255,0.6)" : "1px solid rgba(255,255,255,0.2)",
               background: lang === o.k ? "rgba(255,255,255,0.15)" : "transparent",
-              color: lang === o.k ? "#fff" : "rgba(255,255,255,0.5)", transition: "all 0.15s"
+              color: lang === o.k ? "#fff" : "rgba(255,255,255,0.45)", transition: "all 0.15s"
             }}>{o.l}</button>
           ))}
         </div>
       </div>
-      <div style={{ display: "flex" }}>
-        <nav style={{ width: 210, minWidth: 210, background: "#fff", borderRight: `1px solid ${C.border}`, padding: "10px 0", overflowY: "auto", height: "calc(100vh - 52px)", position: "sticky", top: 52, boxShadow: "2px 0 6px rgba(0,0,0,0.03)" }}>
+
+      {/* Overlay */}
+      {menuOpen && <div onClick={() => setMenuOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 14 }} />}
+
+      <div style={{ display: "flex", position: "relative" }}>
+        {/* Sidebar */}
+        <nav style={{
+          width: 220, background: "#fff", borderRight: `1px solid ${C.border}`,
+          padding: "10px 0", overflowY: "auto", boxShadow: "2px 0 8px rgba(0,0,0,0.06)",
+          position: "fixed", top: 52, bottom: 0, left: menuOpen ? 0 : -230,
+          transition: "left 0.25s ease", zIndex: 15
+        }}>
           {NAV.map(n => (
-            <button key={n.id} onClick={() => setSec(n.id)} style={{
-              display: "block", width: "100%", textAlign: "left", padding: "12px 16px",
+            <button key={n.id} onClick={() => { setSec(n.id); setMenuOpen(false); }} style={{
+              display: "block", width: "100%", textAlign: "left", padding: "13px 18px",
               border: "none", cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s",
               borderLeft: sec === n.id ? `3px solid ${C.green}` : "3px solid transparent",
               background: sec === n.id ? `${C.green}08` : "transparent",
-              color: sec === n.id ? C.dkGreen : C.brownLt, fontSize: 13.5, lineHeight: 1.3
+              color: sec === n.id ? C.dkGreen : C.brownLt, fontSize: 14, lineHeight: 1.3
             }}>
-              <span style={{ marginRight: 7 }}>{n.icon}</span>{n.en}
-              <div style={{ fontSize: 11, color: sec === n.id ? C.green : "#bbb", marginLeft: 25, marginTop: 2 }}>{n.zh}</div>
+              <span style={{ marginRight: 8 }}>{n.icon}</span>{n.en}
+              <div style={{ fontSize: 11.5, color: sec === n.id ? C.green : "#bbb", marginLeft: 27, marginTop: 2 }}>{n.zh}</div>
             </button>
           ))}
         </nav>
-        <main style={{ flex: 1, padding: "24px 36px", overflowY: "auto", maxHeight: "calc(100vh - 52px)" }}>
-          <h2 style={{ fontSize: 22, color: C.dkGreen, marginTop: 0, marginBottom: 24, borderBottom: `2px solid ${C.green}20`, paddingBottom: 10 }}>
+
+        {/* Main content */}
+        <main style={{ flex: 1, padding: "24px 20px", overflowY: "auto", maxHeight: "calc(100vh - 52px)", minHeight: "calc(100vh - 52px)" }}>
+          <h2 style={{ fontSize: 21, color: C.dkGreen, marginTop: 0, marginBottom: 22, borderBottom: `2px solid ${C.green}20`, paddingBottom: 10 }}>
             {NAV.find(n => n.id === sec)?.icon} {NAV.find(n => n.id === sec)?.en}
-            <span style={{ fontSize: 14, color: C.brownLt, fontWeight: "normal", marginLeft: 10 }}>{NAV.find(n => n.id === sec)?.zh}</span>
+            <span style={{ fontSize: 13, color: C.brownLt, fontWeight: "normal", marginLeft: 8 }}>{NAV.find(n => n.id === sec)?.zh}</span>
           </h2>
           {R()}
         </main>
